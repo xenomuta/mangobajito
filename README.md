@@ -18,6 +18,7 @@ You also need to be in the middle first. (ARP poisoning, DNS spoofing, DHCP star
 
 * Because its the easiest and funniest way I have to demonstrate my point.
 * To raise awareness to others.
+* Node.js is fun to work with.
 * Because I can.
 
 ### Bugs
