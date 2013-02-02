@@ -3,7 +3,7 @@
 
 Mango Bajito (something like _low hanginging fruit_ in Dominican lingo) goes for an easier approach rather than trying to break SSL.
 
-It is a MITM proxy that tries to inject mischievous javascript in order to strips SSL and monitor credentials values on login forms.
+It is a MITM proxy that tries to inject mischievous javascript in order to strips SSL from web pages source code, attempting SSLbumping technique  and monitor credentials values on login forms.
 
 At the time of writing this successfully tested against facebook.com, hotmail.com, twitter.com and some "super secure" dominican commercial banks' site.
 
